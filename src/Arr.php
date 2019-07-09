@@ -18,12 +18,12 @@ class Arr
      *
      * @return array
      */
-    public function merge($dest, $result)
+    public static function merge($dest, $result)
     {
         $result = is_array($result) ? $result : [];
         foreach ($dest as $key => $value) {
             $result[$key] = isset($result[$key]) ? $result[$key] : $value;
-            $result[$key] = is_array($result[$key]) ? $this->merge($value, $result[$key]) : $result[$key];
+            $result[$key] = is_array($result[$key]) ? self::merge($value, $result[$key]) : $result[$key];
         }
 
         return $result;
@@ -41,28 +41,28 @@ class Arr
      *
      * @return array
      */
-    public function channelLevel($data, int $pid = 0, string $html = "&nbsp;", string $fieldPri = 'id', string $fieldPid = 'pid', int $level = 1)
+    public static function channelLevel($data, int $pid = 0, string $html = "&nbsp;", string $fieldPri = 'id', string $fieldPid = 'pid', int $level = 1)
     {
         if (empty($data)) {
             return [];
         }
-        $arrays = [];
+        $arr = [];
         foreach ($data as $value) {
             if ($value[$fieldPid] == $pid) {
-                $arrays[$value[$fieldPri]] = $value;
-                $arrays[$value[$fieldPri]]['_level'] = $level;
-                $arrays[$value[$fieldPri]]['_html'] = str_repeat($html, $level - 1);
-                $arrays[$value[$fieldPri]]["_data"] = $this->channelLevel($data, $value[$fieldPri], $html, $fieldPri, $fieldPid, $level + 1);
+                $arr[$value[$fieldPri]] = $value;
+                $arr[$value[$fieldPri]]['_level'] = $level;
+                $arr[$value[$fieldPri]]['_html'] = str_repeat($html, $level - 1);
+                $arr[$value[$fieldPri]]["_data"] = self::channelLevel($data, $value[$fieldPri], $html, $fieldPri, $fieldPid, $level + 1);
             }
         }
 
-        return $arrays;
+        return $arr;
     }
 
     /**
      * 获得栏目列表
      *
-     * @param $arrays //栏目数据
+     * @param $arr //栏目数据
      * @param int $pid 操作的栏目
      * @param string $html 栏目名前字符
      * @param string $fieldPri 表主键
@@ -71,12 +71,12 @@ class Arr
      *
      * @return array
      */
-    public function channelList($arrays, int $pid = 0, string $html = "&nbsp;", string $fieldPri = 'id', string $fieldPid = 'pid', int $level = 1)
+    public static function channelList($arr, int $pid = 0, string $html = "&nbsp;", string $fieldPri = 'id', string $fieldPid = 'pid', int $level = 1)
     {
         $pid = is_array($pid) ? $pid : [$pid];
         $data = [];
         foreach ($pid as $id) {
-            $res = $this->_channelList($arrays, $id, $html, $fieldPri, $fieldPid, $level);
+            $res = self::_channelList($arr, $id, $html, $fieldPri, $fieldPid, $level);
             foreach ($res as $k => $v) {
                 $data[$k] = $v;
             }
@@ -122,24 +122,24 @@ class Arr
      *
      * @return array
      */
-    private function _channelList($data, int $pid = 0, string $html = "&nbsp;", string $fieldPri = 'id', string $fieldPid = 'pid', int $level = 1)
+    private static function _channelList($data, int $pid = 0, string $html = "&nbsp;", string $fieldPri = 'id', string $fieldPid = 'pid', int $level = 1)
     {
         if (empty($data)) {
             return [];
         }
-        $arrays = [];
+        $arr = [];
         foreach ($data as $value) {
             $id = $value[$fieldPri];
             if ($value[$fieldPid] == $pid) {
                 $value['_level'] = $level;
                 $value['_html'] = str_repeat($html, $level - 1);
-                array_push($arrays, $value);
-                $tmp = $this->_channelList($data, $id, $html, $fieldPri, $fieldPid, $level + 1);
-                $arrays = array_merge($arrays, $tmp);
+                array_push($arr, $value);
+                $tmp = self::_channelList($data, $id, $html, $fieldPri, $fieldPid, $level + 1);
+                $arr = array_merge($arr, $tmp);
             }
         }
 
-        return $arrays;
+        return $arr;
     }
 
     /**
@@ -154,7 +154,7 @@ class Arr
      *
      * @return mixed
      */
-    public function categories($categories, int $pid = 0, string $title = 'title', string $id = 'id', string $parent_id = 'parent_id', int $level = 1)
+    public static function categories($categories, int $pid = 0, string $title = 'title', string $id = 'id', string $parent_id = 'parent_id', int $level = 1)
     {
         $collection = collect([]);
         foreach ($categories as $category) {
@@ -162,7 +162,7 @@ class Arr
                 $category['level'] = $level;
                 $category['_' . $title] = ($level == 1 ? '' : '|' . str_repeat('-', $level)) . $category[$title];
                 $collection->push($category);
-                $collection = $collection->merge($this->categories($categories, $category[$id], $title, $id, $parent_id,
+                $collection = $collection->merge(self::categories($categories, $category[$id], $title, $id, $parent_id,
                     $level + 1));
             }
         }
@@ -179,13 +179,13 @@ class Arr
      *
      * @return array
      */
-    public function tree($data, string $title, string $fieldPri = 'id', $fieldPid = 'pid')
+    public static function tree($data, string $title, string $fieldPri = 'id', $fieldPid = 'pid')
     {
         if (!is_array($data) || empty($data)) {
             return [];
         }
-        $arrays = $this->channelList($data, 0, '', $fieldPri, $fieldPid);
-        foreach ($arrays as $key => $value) {
+        $arr = self::channelList($data, 0, '', $fieldPri, $fieldPid);
+        foreach ($arr as $key => $value) {
             $str = "";
             if ($value['_level'] > 2) {
                 for ($i = 1; $i < $value['_level'] - 1; $i++) {
@@ -194,20 +194,20 @@ class Arr
             }
             if ($value['_level'] != 1) {
                 $t = $title ? $value[$title] : '';
-                if (isset($arrays[$key + 1])
-                    && $arrays[$key + 1]['_level'] >= $arrays[$key]['_level']
+                if (isset($arr[$key + 1])
+                    && $arr[$key + 1]['_level'] >= $arr[$key]['_level']
                 ) {
-                    $arrays[$key]['_' . $title] = $str . "├─ " . $value['_html'] . $t;
+                    $arr[$key]['_' . $title] = $str . "├─ " . $value['_html'] . $t;
                 } else {
-                    $arrays[$key]['_' . $title] = $str . "└─ " . $value['_html'] . $t;
+                    $arr[$key]['_' . $title] = $str . "└─ " . $value['_html'] . $t;
                 }
             } else {
-                $arrays[$key]['_' . $title] = $value[$title];
+                $arr[$key]['_' . $title] = $value[$title];
             }
         }
         //设置主键为$fieldPri
         $data = [];
-        foreach ($arrays as $array) {
+        foreach ($arr as $array) {
             //$data[$array[$fieldPri]] = $array;
             $data[] = $array;
         }
@@ -225,28 +225,28 @@ class Arr
      *
      * @return array
      */
-    public function parentChannel($data, int $sid, string $fieldPri = 'id', string $fieldPid = 'pid')
+    public static function parentChannel($data, int $sid, string $fieldPri = 'id', string $fieldPid = 'pid')
     {
         if (empty($data)) {
             return $data;
         } else {
-            $arrays = [];
+            $arr = [];
             foreach ($data as $value) {
                 if ($value[$fieldPri] == $sid) {
-                    $arrays[] = $value;
-                    $_n = $this->parentChannel(
+                    $arr[] = $value;
+                    $_n = self::parentChannel(
                         $data,
                         $value[$fieldPid],
                         $fieldPri,
                         $fieldPid
                     );
                     if (!empty($_n)) {
-                        $arrays = array_merge($arrays, $_n);
+                        $arr = array_merge($arr, $_n);
                     }
                 }
             }
 
-            return $arrays;
+            return $arr;
         }
     }
 
@@ -261,9 +261,9 @@ class Arr
      *
      * @return bool
      */
-    public function isChild($data, int $sid, int $pid, string $fieldPri = 'id', string $fieldPid = 'pid')
+    public static function isChild($data, int $sid, int $pid, string $fieldPri = 'id', string $fieldPid = 'pid')
     {
-        $_data = $this->channelList($data, $pid, '', $fieldPri, $fieldPid);
+        $_data = self::channelList($data, $pid, '', $fieldPri, $fieldPid);
         foreach ($_data as $c) {
             //目标栏目为源栏目的子栏目
             if ($c[$fieldPri] == $sid) {
@@ -283,7 +283,7 @@ class Arr
      *
      * @return bool
      */
-    public function hasChild($data, int $id, string $fieldPid = 'pid')
+    public static function hasChild($data, int $id, string $fieldPid = 'pid')
     {
         foreach ($data as $value) {
             if ($value[$fieldPid] == $id) {
@@ -297,25 +297,25 @@ class Arr
     /**
      * 递归实现迪卡尔乘积
      *
-     * @param $arrays //操作的数组
+     * @param $arr //操作的数组
      * @param array $tmp
      *
      * @return array
      */
-    public function descArte($arrays, $tmp = [])
+    public static function descArte($arr, $tmp = [])
     {
-        $new_arrays = [];
-        foreach (array_shift($arrays) as $value) {
+        $new_arr = [];
+        foreach (array_shift($arr) as $value) {
             $tmp[] = $value;
-            if ($arrays) {
-                $this->descArte($arrays, $tmp);
+            if ($arr) {
+                self::descArte($arr, $tmp);
             } else {
-                $new_arrays[] = $tmp;
+                $new_arr[] = $tmp;
             }
             array_pop($tmp);
         }
 
-        return $new_arrays;
+        return $new_arr;
     }
 
     /**
@@ -326,7 +326,7 @@ class Arr
      *
      * @return array
      */
-    public function del(array $data, array $values)
+    public static function del(array $data, array $values)
     {
         $news = [];
         foreach ($data as $key => $d) {
@@ -348,7 +348,7 @@ class Arr
      *
      * @return array|mixed|null
      */
-    public function get($data, $key = null, $value = null)
+    public static function get($data, $key = null, $value = null)
     {
         $exp = explode('.', $key);
         foreach ((array)$exp as $d) {
@@ -370,7 +370,7 @@ class Arr
      *
      * @return array
      */
-    public function getExtName(array $data, array $extName)
+    public static function getExtName(array $data, array $extName)
     {
         $extData = [];
         foreach ((array)$data as $k => $v) {
@@ -391,7 +391,7 @@ class Arr
      *
      * @return array
      */
-    public function set(array $data, $key, $value)
+    public static function set(array $data, $key, $value)
     {
         $tmp =& $data;
         foreach (explode('.', $key) as $v) {
@@ -413,13 +413,13 @@ class Arr
      *
      * @return array
      */
-    public function keyCase($arr, $type = 0)
+    public static function keyCase($arr, $type = 0)
     {
         $func = $type ? 'strtoupper' : 'strtolower';
         $data = []; //格式化后的数组
         foreach ($arr as $key => $value) {
             $key = $func($key);
-            $data[$key] = is_array($value) ? $this->keyCase($value, $type) : $value;
+            $data[$key] = is_array($value) ? self::keyCase($value, $type) : $value;
         }
 
         return $data;
@@ -429,13 +429,13 @@ class Arr
      * 不区分大小写检测数据键名是否存在
      *
      * @param $key
-     * @param $arrays
+     * @param $arr
      *
      * @return bool
      */
-    public function keyExists($key, $arrays)
+    public static function keyExists($key, $arr)
     {
-        return array_key_exists(strtolower($key), $this->keyExists($arrays));
+        return array_key_exists(strtolower($key), $arr);
     }
 
     /**
@@ -446,12 +446,12 @@ class Arr
      *
      * @return array
      */
-    public function valueCase($arr, $type = 0)
+    public static function valueCase($arr, $type = 0)
     {
         $func = $type ? 'strtoupper' : 'strtolower';
         $data = []; //格式化后的数组
         foreach ($arr as $k => $v) {
-            $data[$k] = is_array($v) ? $this->valueCase($v, $type) : $func($v);
+            $data[$k] = is_array($v) ? self::valueCase($v, $type) : $func($v);
         }
 
         return $data;
@@ -460,20 +460,20 @@ class Arr
     /**
      * 数组进行整数映射转换
      *
-     * @param $arrays //数据
+     * @param $arr //数据
      * @param array $map
      *
      * @return mixed
      */
-    public function intToString($arrays, array $map = ['status' => ['0' => '禁止', '1' => '启用']])
+    public static function intToString($arr, array $map = ['status' => ['0' => '禁止', '1' => '启用']])
     {
         foreach ($map as $name => $m) {
-            if (isset($arrays[$name]) && array_key_exists($arrays[$name], $m)) {
-                $arrays['_' . $name] = $m[$arrays[$name]];
+            if (isset($arr[$name]) && array_key_exists($arr[$name], $m)) {
+                $arr['_' . $name] = $m[$arr[$name]];
             }
         }
 
-        return $arrays;
+        return $arr;
     }
 
     /**
@@ -483,11 +483,11 @@ class Arr
      *
      * @return mixed
      */
-    public function stringToInt($data)
+    public static function stringToInt($data)
     {
         $tmp = $data;
         foreach ((array)$tmp as $k => $v) {
-            $tmp[$k] = is_array($v) ? $this->stringToInt($v)
+            $tmp[$k] = is_array($v) ? self::stringToInt($v)
                 : (is_numeric($v) ? intval($v) : $v);
         }
 
@@ -498,12 +498,12 @@ class Arr
      * 根据下标过滤数据元素
      *
      * @param array $data 原数组数据
-     * @param string $keys 参数的下标
+     * @param array $keys 参数的下标
      * @param int $type 1 存在在$keys时过滤  0 不在时过滤
      *
      * @return array
      */
-    public function filterKeys(array $data, $keys, $type = 1)
+    public static function filterKeys(array $data, array $keys, $type = 1)
     {
         $tmp = $data;
         foreach ($data as $k => $v) {
