@@ -6,9 +6,9 @@
  * Time: 13:51
  */
 
-namespace tests;
+namespace Buqiu\Arr\Tests;
 
-use buqiu\Arr\Arr;
+use Buqiu\Arr\Arr;
 use PHPUnit\Framework\TestCase;
 
 class ArrTest extends TestCase

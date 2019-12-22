@@ -6,7 +6,7 @@
  * Time: 13:59
  */
 
-namespace buqiu\Arr;
+namespace Buqiu\Arr;
 
 class Arr
 {

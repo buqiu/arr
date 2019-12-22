@@ -18,12 +18,12 @@
     "autoload": {
         "files": [],
         "psr-4": {
-            "buqiu\\Arr\\": "src"
+            "Buqiu\\Arr\\": "src"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "tests\\": "tests"
+            "Tests\\": "tests"
         }
     }
 }
