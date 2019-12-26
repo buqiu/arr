@@ -13,8 +13,8 @@ class Arr
     /**
      * 递归合并数组
      *
-     * @param $dest //原数组
-     * @param $result //覆盖的数组
+     * @param mixed $dest 原数组
+     * @param mixed $result 覆盖的数组
      *
      * @return array
      */
@@ -32,7 +32,7 @@ class Arr
     /**
      * 返回多层栏目
      *
-     * @param $data //操作的数组
+     * @param mixed $data 操作的数组
      * @param int $pid 一级PID的值
      * @param string $html 栏目名称前缀
      * @param string $fieldPri 唯一键名，如果是表则是表的主键
@@ -62,7 +62,7 @@ class Arr
     /**
      * 获得栏目列表
      *
-     * @param $arr //栏目数据
+     * @param mixed $arr 栏目数据
      * @param int $pid 操作的栏目
      * @param string $html 栏目名前字符
      * @param string $fieldPri 表主键
@@ -113,7 +113,7 @@ class Arr
     /**
      * 只供channelList方法使用
      *
-     * @param $data //栏目数据
+     * @param mixed $data 栏目数据
      * @param int $pid 操作的栏目
      * @param string $html 栏目名前字符
      * @param string $fieldPri 表主键
@@ -145,7 +145,7 @@ class Arr
     /**
      * 解析多级栏目
      *
-     * @param $categories //栏目数据
+     * @param mixed $categories 栏目数据
      * @param int $pid 操作的栏目
      * @param string $title 标题
      * @param string $id 表主键
@@ -172,7 +172,7 @@ class Arr
     /**
      * 获得树状数据
      *
-     * @param $data //数据
+     * @param mixed $data 数据
      * @param string $title 字段名
      * @param string $fieldPri 主键id
      * @param string $fieldPid 父id
@@ -218,7 +218,7 @@ class Arr
     /**
      * 获得所有父级栏目
      *
-     * @param $data //栏目数据
+     * @param mixed $data 栏目数据
      * @param int $sid 子栏目
      * @param string $fieldPri 唯一键名，如果是表则是表的主键
      * @param string $fieldPid 父ID键名
@@ -253,7 +253,7 @@ class Arr
     /**
      * 判断$s_cid是否是$d_cid的子栏目
      *
-     * @param $data //栏目数据
+     * @param mixed $data 栏目数据
      * @param int $sid 子栏目id
      * @param int $pid 父栏目id
      * @param string $fieldPri 主键
@@ -277,7 +277,7 @@ class Arr
     /**
      * 检测是不否有子栏目
      *
-     * @param $data //栏目数据
+     * @param mixed $data 栏目数据
      * @param int $id 要判断的栏目id
      * @param string $fieldPid 父id表字段名
      *
@@ -297,7 +297,7 @@ class Arr
     /**
      * 递归实现迪卡尔乘积
      *
-     * @param $arr //操作的数组
+     * @param mixed $arr 操作的数组
      * @param array $tmp
      *
      * @return array
@@ -342,7 +342,7 @@ class Arr
      * 根据键名获取数据
      * 如果键名不存在时返回默认值
      *
-     * @param $data
+     * @param mixed $data 数据
      * @param string $key 名称
      * @param mixed $value 默认值
      *
@@ -460,7 +460,7 @@ class Arr
     /**
      * 数组进行整数映射转换
      *
-     * @param $arr //数据
+     * @param mixed $arr 数据
      * @param array $map
      *
      * @return mixed
@@ -479,7 +479,7 @@ class Arr
     /**
      * 数组中的字符串数字转为INT类型
      *
-     * @param $data
+     * @param mixed $data
      *
      * @return mixed
      */
