@@ -38,10 +38,11 @@ class Arr
      * @param string $fieldPri 唯一键名，如果是表则是表的主键
      * @param string $fieldPid 父ID键名
      * @param int $level 不需要传参数（执行时调用）
+     * @param bool $related 是否为关联数组（默认true）
      *
      * @return array
      */
-    public static function channelLevel($data, int $pid = 0, string $html = "&nbsp;", string $fieldPri = 'id', string $fieldPid = 'pid', int $level = 1)
+    public static function channelLevel($data, int $pid = 0, string $html = "&nbsp;", string $fieldPri = 'id', string $fieldPid = 'pid', int $level = 1, bool $related = true)
     {
         if (empty($data)) {
             return [];
@@ -52,11 +53,11 @@ class Arr
                 $arr[$value[$fieldPri]] = $value;
                 $arr[$value[$fieldPri]]['_level'] = $level;
                 $arr[$value[$fieldPri]]['_html'] = str_repeat($html, $level - 1);
-                $arr[$value[$fieldPri]]["_data"] = self::channelLevel($data, $value[$fieldPri], $html, $fieldPri, $fieldPid, $level + 1);
+                $arr[$value[$fieldPri]]["_data"] = self::channelLevel($data, $value[$fieldPri], $html, $fieldPri, $fieldPid, $level + 1, $related);
             }
         }
 
-        return $arr;
+        return $related ? $arr : array_values($arr);
     }
 
     /**
@@ -160,12 +161,21 @@ class Arr
         foreach ($categories as $category) {
             if ($category[$parent_id] == $pid) {
                 $category['level'] = $level;
-                $category['_' . $title] = ($level == 1 ? '' : '|' . str_repeat('-', $level)) . $category[$title];
+                $category['_'.$title] = ($level == 1 ? '' : '|'.str_repeat('-', $level)).$category[$title];
                 $collection->push($category);
-                $collection = $collection->merge(self::categories($categories, $category[$id], $title, $id, $parent_id,
-                    $level + 1));
+                $collection = $collection->merge(
+                    self::categories(
+                        $categories,
+                        $category[$id],
+                        $title,
+                        $id,
+                        $parent_id,
+                        $level + 1
+                    )
+                );
             }
         }
+
         return $collection;
     }
 
@@ -197,12 +207,12 @@ class Arr
                 if (isset($arr[$key + 1])
                     && $arr[$key + 1]['_level'] >= $arr[$key]['_level']
                 ) {
-                    $arr[$key]['_' . $title] = $str . "├─ " . $value['_html'] . $t;
+                    $arr[$key]['_'.$title] = $str."├─ ".$value['_html'].$t;
                 } else {
-                    $arr[$key]['_' . $title] = $str . "└─ " . $value['_html'] . $t;
+                    $arr[$key]['_'.$title] = $str."└─ ".$value['_html'].$t;
                 }
             } else {
-                $arr[$key]['_' . $title] = $value[$title];
+                $arr[$key]['_'.$title] = $value[$title];
             }
         }
         //设置主键为$fieldPri
@@ -469,7 +479,7 @@ class Arr
     {
         foreach ($map as $name => $m) {
             if (isset($arr[$name]) && array_key_exists($arr[$name], $m)) {
-                $arr['_' . $name] = $m[$arr[$name]];
+                $arr['_'.$name] = $m[$arr[$name]];
             }
         }
 
