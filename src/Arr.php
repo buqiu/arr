@@ -33,7 +33,7 @@ class Arr
      * 返回多层栏目
      *
      * @param mixed $data 操作的数组
-     * @param int $pid 一级PID的值
+     * @param mixed $pid 一级PID的值
      * @param string $html 栏目名称前缀
      * @param string $fieldPri 唯一键名，如果是表则是表的主键
      * @param string $fieldPid 父ID键名
@@ -42,7 +42,7 @@ class Arr
      *
      * @return array
      */
-    public static function channelLevel($data, int $pid = 0, string $html = "&nbsp;", string $fieldPri = 'id', string $fieldPid = 'pid', int $level = 1, bool $related = true)
+    public static function channelLevel($data, mixed $pid = null, string $html = "&nbsp;", string $fieldPri = 'id', string $fieldPid = 'pid', int $level = 1, bool $related = true)
     {
         if (empty($data)) {
             return [];
@@ -64,7 +64,7 @@ class Arr
      * 获得栏目列表
      *
      * @param mixed $arr 栏目数据
-     * @param int $pid 操作的栏目
+     * @param mixed $pid 操作的栏目
      * @param string $html 栏目名前字符
      * @param string $fieldPri 表主键
      * @param string $fieldPid 父id
@@ -72,7 +72,7 @@ class Arr
      *
      * @return array
      */
-    public static function channelList($arr, int $pid = 0, string $html = "&nbsp;", string $fieldPri = 'id', string $fieldPid = 'pid', int $level = 1)
+    public static function channelList($arr, mixed $pid = null, string $html = "&nbsp;", string $fieldPri = 'id', string $fieldPid = 'pid', int $level = 1)
     {
         $pid = is_array($pid) ? $pid : [$pid];
         $data = [];
@@ -115,7 +115,7 @@ class Arr
      * 只供channelList方法使用
      *
      * @param mixed $data 栏目数据
-     * @param int $pid 操作的栏目
+     * @param mixed $pid 操作的栏目
      * @param string $html 栏目名前字符
      * @param string $fieldPri 表主键
      * @param string $fieldPid 父id
@@ -123,7 +123,7 @@ class Arr
      *
      * @return array
      */
-    private static function _channelList($data, int $pid = 0, string $html = "&nbsp;", string $fieldPri = 'id', string $fieldPid = 'pid', int $level = 1)
+    private static function _channelList($data, mixed $pid = null, string $html = "&nbsp;", string $fieldPri = 'id', string $fieldPid = 'pid', int $level = 1)
     {
         if (empty($data)) {
             return [];
@@ -147,7 +147,7 @@ class Arr
      * 解析多级栏目
      *
      * @param mixed $categories 栏目数据
-     * @param int $pid 操作的栏目
+     * @param mixed $pid 操作的栏目
      * @param string $title 标题
      * @param string $id 表主键
      * @param string $parent_id 父id
@@ -155,7 +155,7 @@ class Arr
      *
      * @return mixed
      */
-    public static function categories($categories, int $pid = 0, string $title = 'title', string $id = 'id', string $parent_id = 'parent_id', int $level = 1)
+    public static function categories($categories, mixed $pid = null, string $title = 'title', string $id = 'id', string $parent_id = 'parent_id', int $level = 1)
     {
         $collection = collect([]);
         foreach ($categories as $category) {
@@ -229,13 +229,13 @@ class Arr
      * 获得所有父级栏目
      *
      * @param mixed $data 栏目数据
-     * @param int $sid 子栏目
+     * @param mixed $sid 子栏目
      * @param string $fieldPri 唯一键名，如果是表则是表的主键
      * @param string $fieldPid 父ID键名
      *
      * @return array
      */
-    public static function parentChannel($data, int $sid, string $fieldPri = 'id', string $fieldPid = 'pid')
+    public static function parentChannel($data, mixed $sid, string $fieldPri = 'id', string $fieldPid = 'pid')
     {
         if (empty($data)) {
             return $data;
@@ -264,14 +264,14 @@ class Arr
      * 判断$s_cid是否是$d_cid的子栏目
      *
      * @param mixed $data 栏目数据
-     * @param int $sid 子栏目id
-     * @param int $pid 父栏目id
+     * @param mixed $sid 子栏目id
+     * @param mixed $pid 父栏目id
      * @param string $fieldPri 主键
      * @param string $fieldPid 父id字段
      *
      * @return bool
      */
-    public static function isChild($data, int $sid, int $pid, string $fieldPri = 'id', string $fieldPid = 'pid')
+    public static function isChild($data, mixed $sid, mixed $pid, string $fieldPri = 'id', string $fieldPid = 'pid')
     {
         $_data = self::channelList($data, $pid, '', $fieldPri, $fieldPid);
         foreach ($_data as $c) {
@@ -288,12 +288,12 @@ class Arr
      * 检测是不否有子栏目
      *
      * @param mixed $data 栏目数据
-     * @param int $id 要判断的栏目id
+     * @param mixed $id 要判断的栏目id
      * @param string $fieldPid 父id表字段名
      *
      * @return bool
      */
-    public static function hasChild($data, int $id, string $fieldPid = 'pid')
+    public static function hasChild($data, mixed $id, string $fieldPid = 'pid')
     {
         foreach ($data as $value) {
             if ($value[$fieldPid] == $id) {
