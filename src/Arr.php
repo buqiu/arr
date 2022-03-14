@@ -161,7 +161,7 @@ class Arr
         foreach ($categories as $category) {
             if ($category[$parent_id] == $pid) {
                 $category['level'] = $level;
-                $category['_'.$title] = ($level == 1 ? '' : '|'.str_repeat('-', $level)).$category[$title];
+                $category['_' . $title] = ($level == 1 ? '' : '|' . str_repeat('-', $level)) . $category[$title];
                 $collection->push($category);
                 $collection = $collection->merge(
                     self::categories(
@@ -195,7 +195,10 @@ class Arr
             return [];
         }
         $arr = self::channelList($data, 0, '', $fieldPri, $fieldPid);
-        foreach ($arr as $key => $value) {
+        $arrKeys = array_keys($arr);
+        foreach (array_keys($arrKeys) as $k) {
+            $key = $arrKeys[$k];
+            $value = $arr[$key];
             $str = "";
             if ($value['_level'] > 2) {
                 for ($i = 1; $i < $value['_level'] - 1; $i++) {
@@ -204,15 +207,13 @@ class Arr
             }
             if ($value['_level'] != 1) {
                 $t = $title ? $value[$title] : '';
-                if (isset($arr[$key + 1])
-                    && $arr[$key + 1]['_level'] >= $arr[$key]['_level']
-                ) {
-                    $arr[$key]['_'.$title] = $str."├─ ".$value['_html'].$t;
+                if (isset($arrKeys[$k + 1]) && isset($arr[$arrKeys[$k + 1]]) && $arr[$arrKeys[$k + 1]]['_level'] >= $value['_level']) {
+                    $arr[$key]['_' . $title] = $str . "├─ " . $value['_html'] . $t;
                 } else {
-                    $arr[$key]['_'.$title] = $str."└─ ".$value['_html'].$t;
+                    $arr[$key]['_' . $title] = $str . "└─ " . $value['_html'] . $t;
                 }
             } else {
-                $arr[$key]['_'.$title] = $value[$title];
+                $arr[$key]['_' . $title] = $value[$title];
             }
         }
         //设置主键为$fieldPri
@@ -479,7 +480,7 @@ class Arr
     {
         foreach ($map as $name => $m) {
             if (isset($arr[$name]) && array_key_exists($arr[$name], $m)) {
-                $arr['_'.$name] = $m[$arr[$name]];
+                $arr['_' . $name] = $m[$arr[$name]];
             }
         }
 
