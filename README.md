@@ -161,7 +161,7 @@ fieldPid                 父 ID 键名
 #### 无限级栏目分类
 
 ```php
-(Arr::category($categories,$pid = 0,$title = 'title',$id = 'id',$parent_id = 'parent_id')
+(Arr::categories($categories,$pid = 0,$title = 'title',$id = 'id',$parent_id = 'parent_id')
 参数						 说明
 $categories				 操作的数组
 $pid					 父级编号
@@ -173,6 +173,6 @@ $parent_id				 父级字段名
 #### 迪卡尔乘积
 
 ```php
-(Arr::descarte($arr, $tmp = array())
+(Arr::descartes($arr, $tmp = array())
 ```
 
