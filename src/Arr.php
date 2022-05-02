@@ -2,27 +2,29 @@
 /**
  * Name: 数组管理.
  * User: 董坤鸿
- * Date: 2019/06/14
- * Time: 13:59
+ * Date: 2022/05/02
+ * Time: 18:50
  */
 
 namespace Buqiu\Arr;
+
+use Cassandra\Collection;
 
 class Arr
 {
     /**
      * 递归合并数组
      *
-     * @param mixed $dest 原数组
-     * @param mixed $result 覆盖的数组
+     * @param array $dest 原数组
+     * @param array $result 覆盖的数组
      *
      * @return array
      */
-    public static function merge($dest, $result)
+    public static function merge(array $dest, array $result): array
     {
         $result = is_array($result) ? $result : [];
         foreach ($dest as $key => $value) {
-            $result[$key] = isset($result[$key]) ? $result[$key] : $value;
+            $result[$key] = $result[$key] ?? $value;
             $result[$key] = is_array($result[$key]) ? self::merge($value, $result[$key]) : $result[$key];
         }
 
@@ -32,8 +34,8 @@ class Arr
     /**
      * 返回多层栏目
      *
-     * @param mixed $data 操作的数组
-     * @param mixed $pid 一级PID的值
+     * @param array $data 操作的数组
+     * @param int|string|null $pid 一级PID的值
      * @param string $html 栏目名称前缀
      * @param string $fieldPri 唯一键名，如果是表则是表的主键
      * @param string $fieldPid 父ID键名
@@ -42,7 +44,7 @@ class Arr
      *
      * @return array
      */
-    public static function channelLevel($data, mixed $pid = null, string $html = "&nbsp;", string $fieldPri = 'id', string $fieldPid = 'pid', int $level = 1, bool $related = true)
+    public static function channelLevel(array $data, int|string $pid = null, string $html = "&nbsp;", string $fieldPri = 'id', string $fieldPid = 'pid', int $level = 1, bool $related = true): array
     {
         if (empty($data)) {
             return [];
@@ -63,8 +65,8 @@ class Arr
     /**
      * 获得栏目列表
      *
-     * @param mixed $arr 栏目数据
-     * @param mixed $pid 操作的栏目
+     * @param array $arr 栏目数据
+     * @param int|string|null $pid 操作的栏目
      * @param string $html 栏目名前字符
      * @param string $fieldPri 表主键
      * @param string $fieldPid 父id
@@ -72,7 +74,7 @@ class Arr
      *
      * @return array
      */
-    public static function channelList($arr, mixed $pid = null, string $html = "&nbsp;", string $fieldPri = 'id', string $fieldPid = 'pid', int $level = 1)
+    public static function channelList(array $arr, int|string $pid = null, string $html = "&nbsp;", string $fieldPri = 'id', string $fieldPid = 'pid', int $level = 1): array
     {
         $pid = is_array($pid) ? $pid : [$pid];
         $data = [];
@@ -114,8 +116,8 @@ class Arr
     /**
      * 只供channelList方法使用
      *
-     * @param mixed $data 栏目数据
-     * @param mixed $pid 操作的栏目
+     * @param array $data 栏目数据
+     * @param int|string|null $pid 操作的栏目
      * @param string $html 栏目名前字符
      * @param string $fieldPri 表主键
      * @param string $fieldPid 父id
@@ -123,7 +125,7 @@ class Arr
      *
      * @return array
      */
-    private static function _channelList($data, mixed $pid = null, string $html = "&nbsp;", string $fieldPri = 'id', string $fieldPid = 'pid', int $level = 1)
+    private static function _channelList(array $data, int|string $pid = null, string $html = "&nbsp;", string $fieldPri = 'id', string $fieldPid = 'pid', int $level = 1): array
     {
         if (empty($data)) {
             return [];
@@ -146,16 +148,16 @@ class Arr
     /**
      * 解析多级栏目
      *
-     * @param mixed $categories 栏目数据
-     * @param mixed $pid 操作的栏目
+     * @param Collection $categories 栏目数据
+     * @param int|string|null $pid 操作的栏目
      * @param string $title 标题
      * @param string $id 表主键
      * @param string $parent_id 父id
      * @param int $level
      *
-     * @return mixed
+     * @return Collection
      */
-    public static function categories($categories, mixed $pid = null, string $title = 'title', string $id = 'id', string $parent_id = 'parent_id', int $level = 1)
+    public static function categories(Collection $categories, int|string $pid = null, string $title = 'title', string $id = 'id', string $parent_id = 'parent_id', int $level = 1): Collection
     {
         $collection = collect([]);
         foreach ($categories as $category) {
@@ -182,14 +184,14 @@ class Arr
     /**
      * 获得树状数据
      *
-     * @param mixed $data 数据
+     * @param array $data 数据
      * @param string $title 字段名
      * @param string $fieldPri 主键id
      * @param string $fieldPid 父id
      *
      * @return array
      */
-    public static function tree($data, string $title, string $fieldPri = 'id', $fieldPid = 'pid')
+    public static function tree(array $data, string $title, string $fieldPri = 'id', string $fieldPid = 'pid'): array
     {
         if (!is_array($data) || empty($data)) {
             return [];
@@ -229,14 +231,14 @@ class Arr
     /**
      * 获得所有父级栏目
      *
-     * @param mixed $data 栏目数据
-     * @param mixed $sid 子栏目
+     * @param array $data 栏目数据
+     * @param int|string $sid 子栏目
      * @param string $fieldPri 唯一键名，如果是表则是表的主键
      * @param string $fieldPid 父ID键名
      *
      * @return array
      */
-    public static function parentChannel($data, mixed $sid, string $fieldPri = 'id', string $fieldPid = 'pid')
+    public static function parentChannel(array $data, int|string $sid, string $fieldPri = 'id', string $fieldPid = 'pid'): array
     {
         if (empty($data)) {
             return $data;
@@ -264,15 +266,15 @@ class Arr
     /**
      * 判断$s_cid是否是$d_cid的子栏目
      *
-     * @param mixed $data 栏目数据
-     * @param mixed $sid 子栏目id
-     * @param mixed $pid 父栏目id
+     * @param array $data 栏目数据
+     * @param int|string $sid 子栏目id
+     * @param int|string $pid 父栏目id
      * @param string $fieldPri 主键
      * @param string $fieldPid 父id字段
      *
      * @return bool
      */
-    public static function isChild($data, mixed $sid, mixed $pid, string $fieldPri = 'id', string $fieldPid = 'pid')
+    public static function isChild(array $data, int|string $sid, int|string $pid, string $fieldPri = 'id', string $fieldPid = 'pid'): bool
     {
         $_data = self::channelList($data, $pid, '', $fieldPri, $fieldPid);
         foreach ($_data as $c) {
@@ -288,13 +290,13 @@ class Arr
     /**
      * 检测是不否有子栏目
      *
-     * @param mixed $data 栏目数据
-     * @param mixed $id 要判断的栏目id
+     * @param array $data 栏目数据
+     * @param int|string $id 要判断的栏目id
      * @param string $fieldPid 父id表字段名
      *
      * @return bool
      */
-    public static function hasChild($data, mixed $id, string $fieldPid = 'pid')
+    public static function hasChild(array $data, int|string $id, string $fieldPid = 'pid'): bool
     {
         foreach ($data as $value) {
             if ($value[$fieldPid] == $id) {
@@ -308,18 +310,18 @@ class Arr
     /**
      * 递归实现迪卡尔乘积
      *
-     * @param mixed $arr 操作的数组
+     * @param array $arr 操作的数组
      * @param array $tmp
      *
      * @return array
      */
-    public static function descArte($arr, $tmp = [])
+    public static function descartes(array $arr, array $tmp = []): array
     {
         $new_arr = [];
         foreach (array_shift($arr) as $value) {
             $tmp[] = $value;
             if ($arr) {
-                self::descArte($arr, $tmp);
+                self::descartes($arr, $tmp);
             } else {
                 $new_arr[] = $tmp;
             }
@@ -337,7 +339,7 @@ class Arr
      *
      * @return array
      */
-    public static function del(array $data, array $values)
+    public static function del(array $data, array $values): array
     {
         $news = [];
         foreach ($data as $key => $d) {
@@ -353,13 +355,13 @@ class Arr
      * 根据键名获取数据
      * 如果键名不存在时返回默认值
      *
-     * @param mixed $data 数据
-     * @param string $key 名称
+     * @param array $data 数据
+     * @param string|null $key 名称
      * @param mixed $value 默认值
      *
      * @return array|mixed|null
      */
-    public static function get($data, $key = null, $value = null)
+    public static function get(array $data, string $key = null, mixed $value = null): mixed
     {
         $exp = explode('.', $key);
         foreach ((array)$exp as $d) {
@@ -381,7 +383,7 @@ class Arr
      *
      * @return array
      */
-    public static function getExtName(array $data, array $extName)
+    public static function getExtName(array $data, array $extName): array
     {
         $extData = [];
         foreach ((array)$data as $k => $v) {
@@ -402,7 +404,7 @@ class Arr
      *
      * @return array
      */
-    public static function set(array $data, $key, $value)
+    public static function set(array $data, $key, $value): array
     {
         $tmp =& $data;
         foreach (explode('.', $key) as $v) {
@@ -424,7 +426,7 @@ class Arr
      *
      * @return array
      */
-    public static function keyCase($arr, $type = 0)
+    public static function keyCase(array $arr, int $type = 0): array
     {
         $func = $type ? 'strtoupper' : 'strtolower';
         $data = []; //格式化后的数组
@@ -439,12 +441,12 @@ class Arr
     /**
      * 不区分大小写检测数据键名是否存在
      *
-     * @param $key
-     * @param $arr
+     * @param string $key
+     * @param array $arr
      *
      * @return bool
      */
-    public static function keyExists($key, $arr)
+    public static function keyExists(string $key, array $arr): bool
     {
         return array_key_exists(strtolower($key), $arr);
     }
@@ -457,7 +459,7 @@ class Arr
      *
      * @return array
      */
-    public static function valueCase($arr, $type = 0)
+    public static function valueCase(array $arr, int $type = 0): array
     {
         $func = $type ? 'strtoupper' : 'strtolower';
         $data = []; //格式化后的数组
@@ -471,12 +473,12 @@ class Arr
     /**
      * 数组进行整数映射转换
      *
-     * @param mixed $arr 数据
+     * @param array $arr 数据
      * @param array $map
      *
-     * @return mixed
+     * @return array
      */
-    public static function intToString($arr, array $map = ['status' => ['0' => '禁止', '1' => '启用']])
+    public static function intToString(array $arr, array $map = ['status' => ['0' => '禁止', '1' => '启用']]): array
     {
         foreach ($map as $name => $m) {
             if (isset($arr[$name]) && array_key_exists($arr[$name], $m)) {
@@ -490,11 +492,11 @@ class Arr
     /**
      * 数组中的字符串数字转为INT类型
      *
-     * @param mixed $data
+     * @param array $data
      *
-     * @return mixed
+     * @return array
      */
-    public static function stringToInt($data)
+    public static function stringToInt(array $data): array
     {
         $tmp = $data;
         foreach ((array)$tmp as $k => $v) {
@@ -514,7 +516,7 @@ class Arr
      *
      * @return array
      */
-    public static function filterKeys(array $data, array $keys, $type = 1)
+    public static function filterKeys(array $data, array $keys, int $type = 1): array
     {
         $tmp = $data;
         foreach ($data as $k => $v) {
